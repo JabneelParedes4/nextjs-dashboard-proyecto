@@ -2,5 +2,15 @@
   "extends": [
     "next/core-web-vitals",
     "next/typescript"
-  ]
+  ],
+  "rules": {
+    // Aquí puedes añadir o modificar reglas específicas
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "react/react-in-jsx-scope": "off" // Si usas Next.js 11 o superior
+  },
+  "settings": {
+    "next": {
+      "rootDir": "./" // Ajusta si estás en un monorepo
+    }
+  }
 }

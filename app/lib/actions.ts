@@ -63,13 +63,13 @@ export async function createInvoice(prevState: State, formData: FormData) {
       INSERT INTO invoices (customer_id, amount, status, date)
       VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
     `;
-  } catch (error) {
+  } catch {
     return {
       message: 'Database Error: Failed to Create Invoice.',
     };
   }
 
-  revalidatePath('/dashboard/invoices');
+  await revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
 
@@ -97,33 +97,28 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
       SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
       WHERE id = ${id}
     `;
-  } catch (error) {
+  } catch {
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
 
-  revalidatePath('/dashboard/invoices');
+  await revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
 
 // Función para eliminar una factura
 export async function deleteInvoice(id: string) {
   await sql`DELETE FROM invoices WHERE id = ${id}`;
-  revalidatePath('/dashboard/invoices');
+  await revalidatePath('/dashboard/invoices');
 }
 
 // Función para autenticar al usuario
-export async function authenticate(
-    prevState: string | undefined,
-    formData: FormData,
-  ) {
-    try {
-      await signIn('credentials', formData);
-    } catch (error) {
-      if (error instanceof AuthError) {
-            // Puedes mostrar un mensaje genérico o usar error.message si lo deseas
+export async function authenticate(prevState: string | undefined, formData: FormData) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
       return 'Invalid credentials.';
     }
-
-    throw error;
+    throw error; // Lanza otros errores si no son de autenticación
   }
 }
